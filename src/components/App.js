@@ -15,7 +15,8 @@ class App extends Component {
       onePost: {},
       userTags: new Array(1),
       suggestedUserTags: new Array(1),
-      searchBox: []
+      searchBox: [],
+      showList: false,
     };
   }
 
@@ -58,6 +59,12 @@ class App extends Component {
       returnType: ReturnTypeEnums.ALL_MATCHES,
     });
 
+    if (suggestionarr !== undefined) {
+      this.setState({
+        searchBox: suggestionarr,
+        showList: true,
+      });
+    }
 
     // console.log("Array is" + suggestionarr[0]);
     this.setState({
@@ -101,6 +108,7 @@ class App extends Component {
   inputTagHandler = async (tag) => {
     this.setState({
       tagInput: tag,
+      showList: false,
     });
     console.log("tag is" + tag);
     await this.searchHandler();
@@ -155,6 +163,14 @@ class App extends Component {
           <p>{tag}</p>
         ))}
         <input onChange={this.inputHandler} placeholder="enter tag name" />
+        <div>
+          <ul>
+            {this.state.showList &&
+              this.state.searchBox.map((key) => (
+                <li onClick={() => this.inputTagHandler(key)}>{key}</li>
+              ))}
+          </ul>
+        </div>
         <button onClick={this.searchHandler}>Submit</button>
         {this.state.showAll ? (
           this.state.statusArray.map((status, ind) =>
