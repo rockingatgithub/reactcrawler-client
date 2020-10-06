@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Button } from "react-bootstrap";
 import ms from "pretty-ms";
+import didYouMean, { ReturnTypeEnums, ThresholdTypeEnums } from "didyoumean2";
 
 class App extends Component {
   constructor(props) {
@@ -12,6 +13,9 @@ class App extends Component {
       statusArray: [],
       showAll: true,
       onePost: {},
+      userTags: new Array(1),
+      suggestedUserTags: new Array(1),
+      searchBox: []
     };
   }
 
@@ -26,24 +30,36 @@ class App extends Component {
       await fetch(`http://localhost:9000/getPage?url=${tempArray[i].url}`)
         .then((res) => res.json())
         .then((res) => {
-          let post = {
-            pageResponse: res.pageResponse,
-            currentAuthor: res.pageResponse.author,
-            tags: res.pageResponse.tags,
-            responses: res.pageResponse.responses,
-          };
-          tempArray[i].status = "completed";
-          tempArray[i].details = post;
-          time = new Date().getTime() - time;
-          tempArray[i].responseTime = ms(time);
-          this.setState({
-            statusArray: tempArray,
-          });
+          if (res.pageResponse !== undefined) {
+            let post = {
+              pageResponse: res.pageResponse,
+              currentAuthor: res.pageResponse.author,
+              tags: res.pageResponse.tags,
+              responses: res.pageResponse.responses,
+            };
+            tempArray[i].status = "completed";
+            tempArray[i].details = post;
+            time = new Date().getTime() - time;
+            tempArray[i].responseTime = ms(time);
+            this.setState({
+              statusArray: tempArray,
+            });
+          }
         });
     }
   };
 
   inputHandler = (e) => {
+    const { userTags, suggestedUserTags } = this.state;
+
+    let matchList = [...userTags, ...suggestedUserTags];
+
+    let suggestionarr = didYouMean(e.target.value, matchList, {
+      returnType: ReturnTypeEnums.ALL_MATCHES,
+    });
+
+
+    // console.log("Array is" + suggestionarr[0]);
     this.setState({
       tagInput: e.target.value,
     });
@@ -116,10 +132,28 @@ class App extends Component {
     await this.getPage();
   };
 
+  getUserTags = async () => {
+    await fetch(`http://localhost:9000/users/getTags`)
+      .then((res) => res.json())
+      .then((res) => {
+        this.setState({
+          userTags: res.tags,
+          suggestedUserTags: res.suggestedTags,
+        });
+      });
+  };
+
+  componentDidMount = () => {
+    this.getUserTags();
+  };
+
   render() {
     const { onePost } = this.state;
     return (
       <div>
+        {this.state.userTags.map((tag) => (
+          <p>{tag}</p>
+        ))}
         <input onChange={this.inputHandler} placeholder="enter tag name" />
         <button onClick={this.searchHandler}>Submit</button>
         {this.state.showAll ? (
