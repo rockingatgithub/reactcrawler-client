@@ -9,4 +9,30 @@ body {
 
 .blog-heading {
   font-family: "David Libre", serif;
+  font-size: 2.25rem !important;
+}
+
+.blog-para {
+  font-size: 16px;
+}
+
+.my-container {
+  padding-left: 0 !important ;
+  padding-right: 0 !important;
+}
+
+.input-row {
+  margin-top: 30px !important;
+}
+
+#tagInput {
+  height: 48px;
+}
+
+#search-button {
+  margin-top: 5px;
+}
+
+.history-card {
+  margin-top: 24px;
 }

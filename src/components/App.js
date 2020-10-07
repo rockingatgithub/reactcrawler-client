@@ -7,6 +7,8 @@ import {
   Form,
   ListGroup,
   Spinner,
+  Card,
+  Navbar,
 } from "react-bootstrap";
 import ms from "pretty-ms";
 import didYouMean, { ReturnTypeEnums } from "didyoumean2";
@@ -73,22 +75,18 @@ class App extends Component {
         showList: true,
       });
     }
-
-    // console.log("Array is" + suggestionarr[0]);
     this.setState({
       tagInput: e.target.value,
     });
   };
 
   searchHandler = async () => {
-    this.setState({
-      showList: false,
-    });
     await fetch(`http://localhost:9000/getPage/tag/${this.state.tagInput}`)
       .then((res) => res.json())
       .then((res) =>
         this.setState({
           postsList: res.pageResponse.hrefListArray,
+          showList: false,
         })
       );
     let statusArray = new Array(this.state.postsList.length);
@@ -116,13 +114,15 @@ class App extends Component {
     });
   };
 
-  inputTagHandler = async (tag) => {
-    this.setState({
-      tagInput: tag,
-      showList: false,
-    });
+  inputTagHandler = (tag) => {
+    this.setState(
+      {
+        tagInput: tag,
+        showList: false,
+      },
+      this.searchHandler
+    );
     console.log("tag is" + tag);
-    await this.searchHandler();
   };
 
   loadMoreHandler = async () => {
@@ -162,6 +162,12 @@ class App extends Component {
       });
   };
 
+  showAllHandler = () => {
+    this.setState({
+      showAll: true,
+    });
+  };
+
   componentDidMount = () => {
     this.getUserTags();
   };
@@ -169,141 +175,205 @@ class App extends Component {
   render() {
     const { onePost } = this.state;
     return (
-      <Container fluid>
-        <Row>
-          <Col lg={10}>
-            <Row>
-              <Col lg={10}>
-                <Form>
-                  <Form.Group controlId="tagInput">
-                    {/* <Form.Label>Tag</Form.Label> */}
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter a tag"
-                      onChange={this.inputHandler}
-                    />
-                  </Form.Group>
-                  <ListGroup>
-                    {this.state.showList &&
-                      this.state.searchBox.map((key) => (
-                        <ListGroup.Item
-                          onClick={() => this.inputTagHandler(key)}
-                        >
-                          {key}
-                        </ListGroup.Item>
-                      ))}
-                  </ListGroup>
-                </Form>
-              </Col>
-              <Col lg={2}>
-                <Button
-                  variant="primary"
-                  type="button"
-                  onClick={this.searchHandler}
-                >
-                  Submit
-                </Button>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                {this.state.showAll ? (
-                  <ListGroup>
-                    {this.state.statusArray.map((status, ind) =>
-                      status.status !== "completed" ? (
-                        <ListGroup.Item>
-                          <small>{ind + 1} </small>
-                          <p>
-                            {status.status}{" "}
-                            {status.status === "pending...." ? (
-                              <Spinner
-                                animation="border"
-                                variant="primary"
-                                size="sm"
-                              />
-                            ) : (
-                              <Spinner
-                                animation="border"
-                                variant="success"
-                                size="sm"
-                              />
-                            )}
-                          </p>
-                        </ListGroup.Item>
-                      ) : (
-                        <ListGroup.Item onClick={() => this.openOne(status)}>
-                          <p>{status.responseTime}</p>
-                          <p>{status.details.pageResponse.heading}</p>
-                          <br />
-                          <p>{status.details.currentAuthor}</p>
-                          <br />
-                          <p>{status.details.pageResponse.blogContent}</p>
-                          <br />
-                          <p>
-                            {status.details.tags.map((tag) =>
-                              tag.substr(tag.lastIndexOf("/") + 1)
-                            )}
-                          </p>
-                          <br />
-                          <p>
-                            {status.details.responses.map(
-                              (response) => response
-                            )}
-                          </p>
-                        </ListGroup.Item>
-                      )
-                    )}
-                  </ListGroup>
-                ) : (
-                  <ListGroup>
-                    {
-                      <div>
-                        <p>{onePost.responseTime}</p>
-                        <p>{onePost.details.pageResponse.heading}</p>
-                        <br />
-                        <p>{onePost.details.currentAuthor}</p>
-                        <br />
-                        <p>{onePost.details.pageResponse.blogContent}</p>
-                        <br />
-                        <div>
-                          {onePost.details.tags.map((tag) => (
-                            <p onClick={() => this.inputTagHandler(tag)}>
-                              {" "}
-                              {tag.substr(tag.lastIndexOf("/") + 1)}{" "}
+      <div>
+        <Container fluid className="my-container">
+          <Row noGutters>
+            <Col>
+              <Navbar bg="light" expand="lg">
+                <Navbar.Brand href="#home">React-Crawler</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              </Navbar>
+            </Col>
+          </Row>
+        </Container>
+        <Container fluid>
+          <Row>
+            <Col lg={10}>
+              <Row className="input-row">
+                <Col lg={10}>
+                  <Form>
+                    <Form.Group controlId="tagInput">
+                      {/* <Form.Label>Tag</Form.Label> */}
+                      <Form.Control
+                        type="text"
+                        placeholder="Interesting blogs are on the way, type a word... "
+                        onChange={this.inputHandler}
+                        value={this.state.tagInput}
+                      />
+                    </Form.Group>
+                    <ListGroup>
+                      {this.state.showList &&
+                        this.state.searchBox.map((key) => (
+                          <ListGroup.Item
+                            onClick={() => this.inputTagHandler(key)}
+                          >
+                            {key}
+                          </ListGroup.Item>
+                        ))}
+                    </ListGroup>
+                  </Form>
+                </Col>
+                <Col lg={2}>
+                  <Button
+                    variant="outline-primary"
+                    type="button"
+                    onClick={this.searchHandler}
+                    id="search-button"
+                  >
+                    Submit
+                  </Button>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  {this.state.showAll ? (
+                    <ListGroup>
+                      {this.state.statusArray.map((status, ind) =>
+                        status.status !== "completed" ? (
+                          <ListGroup.Item>
+                            <small>{ind + 1} </small>
+                            <p>
+                              {status.status}{" "}
+                              {status.status === "pending...." ? (
+                                <Spinner
+                                  animation="border"
+                                  variant="primary"
+                                  size="sm"
+                                />
+                              ) : (
+                                <Spinner
+                                  animation="border"
+                                  variant="success"
+                                  size="sm"
+                                />
+                              )}
                             </p>
-                          ))}
-                        </div>
-                        <br />
-                        <p>
-                          {onePost.details.responses.map(
-                            (response) => response
+                          </ListGroup.Item>
+                        ) : (
+                          <ListGroup.Item>
+                            <Card>
+                              <Card.Header>
+                                {status.details.currentAuthor}
+                              </Card.Header>
+                              <Card.Body>
+                                <Card.Title className="blog-heading">
+                                  {status.details.pageResponse.heading}
+                                </Card.Title>
+
+                                <Card.Text>
+                                  {status.details.pageResponse.blogContent}
+                                </Card.Text>
+
+                                {status.details.tags.map((tag) => (
+                                  <Button
+                                    onClick={() =>
+                                      this.inputTagHandler(
+                                        tag.substr(tag.lastIndexOf("/") + 1)
+                                      )
+                                    }
+                                    size="sm"
+                                    style={{ marginRight: "10px" }}
+                                    variant="secondary"
+                                  >
+                                    {" "}
+                                    {tag.substr(tag.lastIndexOf("/") + 1)}{" "}
+                                  </Button>
+                                ))}
+
+                                <div style={{ marginTop: "20px" }}>
+                                  <Button onClick={() => this.openOne(status)}>
+                                    Read More...
+                                  </Button>
+                                </div>
+                              </Card.Body>
+                              <Card.Footer className="text-muted">
+                                Page Load Time:- {status.responseTime}
+                              </Card.Footer>
+                            </Card>
+                          </ListGroup.Item>
+                        )
+                      )}
+                    </ListGroup>
+                  ) : (
+                    <Card>
+                      <Card.Header>{onePost.details.currentAuthor}</Card.Header>
+                      <Card.Body>
+                        <Card.Title className="blog-heading">
+                          {onePost.details.pageResponse.heading}
+                        </Card.Title>
+                        <Card.Text>
+                          {/* {onePost.details.pageResponse.blogContent} */}
+                          {onePost.details.pageResponse.wholeBlogContent.map(
+                            (para) => (
+                              <p className="blog-para">{para}</p>
+                            )
                           )}
-                        </p>
+                        </Card.Text>
+
+                        {onePost.details.tags.map((tag) => (
+                          <Button
+                            onClick={() =>
+                              this.inputTagHandler(
+                                tag.substr(tag.lastIndexOf("/") + 1)
+                              )
+                            }
+                            size="sm"
+                            style={{ marginRight: "10px" }}
+                            variant="secondary"
+                          >
+                            {" "}
+                            {tag.substr(tag.lastIndexOf("/") + 1)}{" "}
+                          </Button>
+                        ))}
+
+                        <ListGroup>
+                          <h5>
+                            Responses{" "}
+                            {onePost.details.responses !== undefined && (
+                              <small> {onePost.details.responses.length}</small>
+                            )}
+                          </h5>
+                          {onePost.details.responses.map((response) => (
+                            <ListGroup.Item> {response} </ListGroup.Item>
+                          ))}
+                        </ListGroup>
+
                         <Button onClick={this.loadMoreHandler}>
                           Load More
                         </Button>
-                      </div>
-                    }
-                  </ListGroup>
-                )}
-              </Col>
-            </Row>
-          </Col>
-          <Col lg={2}>
-            <ListGroup>
-              <h5>Search History</h5>
-              {this.state.userTags.map((tag) => (
-                <ListGroup.Item onClick={() => this.inputTagHandler(tag)}>
-                  {tag}
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col lg={10}></Col>
-        </Row>
-      </Container>
+                        <Button
+                          onClick={this.showAllHandler}
+                          style={{ marginLeft: "20px" }}
+                        >
+                          Show All
+                        </Button>
+                      </Card.Body>
+                      <Card.Footer>
+                        Page Load Time:- {onePost.responseTime}
+                      </Card.Footer>
+                    </Card>
+                  )}
+                </Col>
+              </Row>
+            </Col>
+            <Col lg={2}>
+              <Card className="history-card">
+                <Card.Header>Search History</Card.Header>
+                <ListGroup>
+                  {this.state.userTags.map((tag) => (
+                    <ListGroup.Item onClick={() => this.inputTagHandler(tag)}>
+                      {tag}
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              </Card>
+            </Col>
+          </Row>
+          <Row>
+            <Col lg={10}></Col>
+          </Row>
+        </Container>
+      </div>
     );
   }
 }
