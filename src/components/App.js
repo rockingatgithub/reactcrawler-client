@@ -12,6 +12,14 @@ import {
 } from "react-bootstrap";
 import ms from "pretty-ms";
 import didYouMean, { ReturnTypeEnums } from "didyoumean2";
+import {
+  GreatThings,
+  BeautifulQuestions,
+  SignalNoise,
+  Thursday,
+  ReadySetGo,
+  SunnyMorning,
+} from "moving-letters";
 
 class App extends Component {
   constructor(props) {
@@ -27,6 +35,9 @@ class App extends Component {
       suggestedUserTags: new Array(1),
       searchBox: [],
       showList: false,
+      showLoading: false,
+      showLoadingButton: false,
+      showHeading: true,
     };
   }
 
@@ -77,16 +88,21 @@ class App extends Component {
     }
     this.setState({
       tagInput: e.target.value,
+      showHeading: false,
     });
   };
 
   searchHandler = async () => {
+    this.setState({
+      showLoading: true,
+    });
     await fetch(`http://localhost:9000/getPage/tag/${this.state.tagInput}`)
       .then((res) => res.json())
       .then((res) =>
         this.setState({
           postsList: res.pageResponse.hrefListArray,
           showList: false,
+          showLoading: false,
         })
       );
     let statusArray = new Array(this.state.postsList.length);
@@ -126,11 +142,15 @@ class App extends Component {
   };
 
   loadMoreHandler = async () => {
+    this.setState({
+      showLoadingButton: true,
+    });
     await fetch(`http://localhost:9000/getPage/loadMore/${this.state.tagInput}`)
       .then((res) => res.json())
       .then((res) =>
         this.setState({
           postsList: res.pageResponse.hrefListArray,
+          showLoadingButton: false,
         })
       );
     let statusArray = new Array(this.state.postsList.length);
@@ -193,7 +213,6 @@ class App extends Component {
                 <Col lg={10}>
                   <Form>
                     <Form.Group controlId="tagInput">
-                      {/* <Form.Label>Tag</Form.Label> */}
                       <Form.Control
                         type="text"
                         placeholder="Interesting blogs are on the way, type a word... "
@@ -226,6 +245,22 @@ class App extends Component {
               </Row>
               <Row>
                 <Col>
+                  {this.state.showHeading && (
+                    <div className="moving-text">
+                    <GreatThings
+                      text=" Hello Admin! great blogs ahead."
+                      
+                    />
+                    </div>
+                  )}
+                  {this.state.showLoading && (
+                    <span>
+                      {" "}
+                      <Spinner animation="grow" variant="info" />
+                      <Spinner animation="grow" variant="info" size="sm" /> We
+                      are fetching interesting blogs for you
+                    </span>
+                  )}
                   {this.state.showAll ? (
                     <ListGroup>
                       {this.state.statusArray.map((status, ind) =>
@@ -328,7 +363,11 @@ class App extends Component {
 
                         <ListGroup>
                           <h5>
-                            Responses{" "}
+                            <img
+                              src="https://www.flaticon.com/svg/static/icons/svg/126/126501.svg"
+                              style={{ height: "24px", width: "24px" }}
+                              alt="Responses"
+                            />
                             {onePost.details.responses !== undefined && (
                               <small> {onePost.details.responses.length}</small>
                             )}
@@ -338,9 +377,23 @@ class App extends Component {
                           ))}
                         </ListGroup>
 
-                        <Button onClick={this.loadMoreHandler}>
-                          Load More
-                        </Button>
+                        {this.state.showLoadingButton ? (
+                          <Button variant="primary" disabled>
+                            <Spinner
+                              as="span"
+                              animation="grow"
+                              size="sm"
+                              role="status"
+                              aria-hidden="true"
+                            />
+                            Loading...
+                          </Button>
+                        ) : (
+                          <Button onClick={this.loadMoreHandler}>
+                            Load More
+                          </Button>
+                        )}
+
                         <Button
                           onClick={this.showAllHandler}
                           style={{ marginLeft: "20px" }}
