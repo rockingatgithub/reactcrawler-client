@@ -46,7 +46,7 @@ class App extends Component {
         statusArray: tempArray,
       });
       let time = new Date().getTime();
-      await fetch(`http://localhost:9000/getPage?url=${tempArray[i].url}`)
+      await fetch(`http://35.154.98.221:9000/getPage?url=${tempArray[i].url}`)
         .then((res) => res.json())
         .then((res) => {
           if (res.pageResponse !== undefined) {
@@ -95,7 +95,7 @@ class App extends Component {
     this.setState({
       showLoading: true,
     });
-    await fetch(`http://localhost:9000/getPage/tag/${this.state.tagInput}`)
+    await fetch(`http://35.154.98.221/getPage/tag/${this.state.tagInput}`)
       .then((res) => res.json())
       .then((res) =>
         this.setState({
@@ -147,7 +147,9 @@ class App extends Component {
     this.setState({
       showLoadingButton: true,
     });
-    await fetch(`http://localhost:9000/getPage/loadMore/${this.state.tagInput}`)
+    await fetch(
+      `http://35.154.98.221:9000/getPage/loadMore/${this.state.tagInput}`
+    )
       .then((res) => res.json())
       .then((res) =>
         this.setState({
@@ -174,7 +176,7 @@ class App extends Component {
   };
 
   getUserTags = async () => {
-    await fetch(`http://localhost:9000/users/getTags`)
+    await fetch(`http://35.154.98.221:9000/users/getTags`)
       .then((res) => res.json())
       .then((res) => {
         this.setState({
