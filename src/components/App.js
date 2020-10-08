@@ -1,3 +1,5 @@
+// ==========================================main react component======================================================
+
 import React, { Component } from "react";
 import {
   Button,
@@ -12,14 +14,7 @@ import {
 } from "react-bootstrap";
 import ms from "pretty-ms";
 import didYouMean, { ReturnTypeEnums } from "didyoumean2";
-import {
-  GreatThings,
-  BeautifulQuestions,
-  SignalNoise,
-  Thursday,
-  ReadySetGo,
-  SunnyMorning,
-} from "moving-letters";
+import { GreatThings } from "moving-letters";
 
 class App extends Component {
   constructor(props) {
@@ -40,6 +35,8 @@ class App extends Component {
       showHeading: true,
     };
   }
+
+  // ====================================handler to get the fetch blog=============================
 
   getPage = async () => {
     for (let i = 0; i < this.state.statusArray.length; i++) {
@@ -70,6 +67,8 @@ class App extends Component {
         });
     }
   };
+
+  // ==============================for user input=============================================
 
   inputHandler = (e) => {
     const { userTags, suggestedUserTags } = this.state;
@@ -141,6 +140,8 @@ class App extends Component {
     );
     console.log("tag is" + tag);
   };
+
+  // =========================================load more handler================================
 
   loadMoreHandler = async () => {
     this.setState({
