@@ -53,9 +53,14 @@ body {
 
 .tag-buttons {
   margin-right: 20px;
+  margin-top: 10px;
 }
 
 .history-list {
   height: 520px;
   overflow: scroll;
+}
+
+.horizontal-tag-list {
+  flex-wrap: wrap;
 }

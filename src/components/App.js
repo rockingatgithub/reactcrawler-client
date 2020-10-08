@@ -201,9 +201,7 @@ class App extends Component {
           <Row noGutters>
             <Col>
               <Navbar bg="light" expand="lg">
-                <Navbar.Brand href="#home">
-                  React-Crawler - Crawl freely with Node.js and React.js{" "}
-                </Navbar.Brand>
+                <Navbar.Brand href="#home">React-Crawler </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
               </Navbar>
             </Col>
@@ -253,7 +251,7 @@ class App extends Component {
                       <GreatThings text=" Hello Admin! great blogs ahead." />
                       <div id="suggested-tag-box">
                         <h5>Suggested tags</h5>
-                        <ListGroup horizontal>
+                        <ListGroup horizontal className="horizontal-tag-list">
                           <Button
                             className="tag-buttons"
                             variant="secondary"
