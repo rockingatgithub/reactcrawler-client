@@ -44,7 +44,7 @@ class App extends Component {
   getPage = async () => {
     for (let i = 0; i < this.state.statusArray.length; i++) {
       let tempArray = [...this.state.statusArray];
-      tempArray[i].status = "crawling....";
+      tempArray[i].status = "Crawling....";
       this.setState({
         statusArray: tempArray,
       });
@@ -103,12 +103,13 @@ class App extends Component {
           postsList: res.pageResponse.hrefListArray,
           showList: false,
           showLoading: false,
+          showHeading: false,
         })
       );
     let statusArray = new Array(this.state.postsList.length);
     for (let i = 0; i < statusArray.length; i++) {
       statusArray[i] = {
-        status: "pending....",
+        status: "Pending....",
         url: this.state.postsList[i],
         details: {},
         responseTime: "",
@@ -156,7 +157,7 @@ class App extends Component {
     let statusArray = new Array(this.state.postsList.length);
     for (let i = 0; i < statusArray.length; i++) {
       statusArray[i] = {
-        status: "pending....",
+        status: "Pending....",
         url: this.state.postsList[i],
         details: {},
         responseTime: "",
@@ -200,7 +201,9 @@ class App extends Component {
           <Row noGutters>
             <Col>
               <Navbar bg="light" expand="lg">
-                <Navbar.Brand href="#home">React-Crawler</Navbar.Brand>
+                <Navbar.Brand href="#home">
+                  React-Crawler - Crawl freely with Node.js and React.js{" "}
+                </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
               </Navbar>
             </Col>
@@ -247,10 +250,75 @@ class App extends Component {
                 <Col>
                   {this.state.showHeading && (
                     <div className="moving-text">
-                    <GreatThings
-                      text=" Hello Admin! great blogs ahead."
-                      
-                    />
+                      <GreatThings text=" Hello Admin! great blogs ahead." />
+                      <div id="suggested-tag-box">
+                        <h5>Suggested tags</h5>
+                        <ListGroup horizontal>
+                          <Button
+                            className="tag-buttons"
+                            variant="secondary"
+                            onClick={() => this.inputTagHandler("web")}
+                          >
+                            web
+                          </Button>
+                          <Button
+                            className="tag-buttons"
+                            variant="secondary"
+                            onClick={() => this.inputTagHandler("ios")}
+                          >
+                            ios
+                          </Button>
+                          <Button
+                            className="tag-buttons"
+                            variant="secondary"
+                            onClick={() => this.inputTagHandler("food")}
+                          >
+                            food
+                          </Button>
+                          <Button
+                            className="tag-buttons"
+                            variant="secondary"
+                            onClick={() => this.inputTagHandler("life")}
+                          >
+                            life
+                          </Button>
+                          <Button
+                            className="tag-buttons"
+                            variant="secondary"
+                            onClick={() => this.inputTagHandler("linux")}
+                          >
+                            linux
+                          </Button>
+                          <Button
+                            className="tag-buttons"
+                            variant="secondary"
+                            onClick={() => this.inputTagHandler("bank")}
+                          >
+                            bank
+                          </Button>
+                          <Button
+                            className="tag-buttons"
+                            variant="secondary"
+                            onClick={() => this.inputTagHandler("android")}
+                          >
+                            android
+                          </Button>
+                          <Button
+                            className="tag-buttons"
+                            variant="secondary"
+                            onClick={() => this.inputTagHandler("hollywood")}
+                          >
+                            hollywood
+                          </Button>
+                          <Button
+                            className="tag-buttons"
+                            variant="secondary"
+                            onClick={() => this.inputTagHandler("usa")}
+                          >
+                            usa
+                          </Button>
+                        </ListGroup>
+                      </div>
                     </div>
                   )}
                   {this.state.showLoading && (
@@ -269,7 +337,7 @@ class App extends Component {
                             <small>{ind + 1} </small>
                             <p>
                               {status.status}{" "}
-                              {status.status === "pending...." ? (
+                              {status.status === "Pending...." ? (
                                 <Spinner
                                   animation="border"
                                   variant="primary"
@@ -337,7 +405,6 @@ class App extends Component {
                           {onePost.details.pageResponse.heading}
                         </Card.Title>
                         <Card.Text>
-                          {/* {onePost.details.pageResponse.blogContent} */}
                           {onePost.details.pageResponse.wholeBlogContent.map(
                             (para) => (
                               <p className="blog-para">{para}</p>
@@ -412,7 +479,7 @@ class App extends Component {
             <Col lg={2}>
               <Card className="history-card">
                 <Card.Header>Search History</Card.Header>
-                <ListGroup>
+                <ListGroup className="history-list">
                   {this.state.userTags.map((tag) => (
                     <ListGroup.Item onClick={() => this.inputTagHandler(tag)}>
                       {tag}

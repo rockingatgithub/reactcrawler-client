@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: url("https://img.techpowerup.org/201008/cleaning-ppt-background.jpg");
 }
 
 .blog-heading {
@@ -44,4 +45,17 @@ body {
 .moving-text h1 {
   color: cadetblue;
   font-weight: 600 !important;
+}
+
+#suggested-tag-box {
+  margin-top: 90px;
+}
+
+.tag-buttons {
+  margin-right: 20px;
+}
+
+.history-list {
+  height: 520px;
+  overflow: scroll;
 }
