@@ -95,7 +95,7 @@ class App extends Component {
     this.setState({
       showLoading: true,
     });
-    await fetch(`http://35.154.98.221/getPage/tag/${this.state.tagInput}`)
+    await fetch(`http://35.154.98.221:9000/getPage/tag/${this.state.tagInput}`)
       .then((res) => res.json())
       .then((res) =>
         this.setState({
