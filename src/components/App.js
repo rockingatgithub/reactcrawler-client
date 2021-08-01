@@ -33,6 +33,7 @@ class App extends Component {
       showLoading: false,
       showLoadingButton: false,
       showHeading: true,
+      authorsListArray: [],
     };
   }
 
@@ -46,13 +47,12 @@ class App extends Component {
         statusArray: tempArray,
       });
       let time = new Date().getTime();
-      await fetch(`http://localhost:9000/getPage?url=${tempArray[i].url}`)
+      await fetch(`http://localhost:9000/getPage?url=${tempArray[i].url}&author=${tempArray[i].author}`)
         .then((res) => res.json())
         .then((res) => {
           if (res.pageResponse !== undefined) {
             let post = {
               pageResponse: res.pageResponse,
-              currentAuthor: res.pageResponse.author,
               tags: res.pageResponse.tags,
               responses: res.pageResponse.responses,
             };
@@ -100,18 +100,20 @@ class App extends Component {
       .then((res) =>
         this.setState({
           postsList: res.pageResponse.hrefListArray,
+          authorsListArray: res.pageResponse.authorsListArray,
           showList: false,
           showLoading: false,
           showHeading: false,
         })
       );
     let statusArray = new Array(this.state.postsList.length);
-    for (let i = 0; i < statusArray.length; i++) {
+    for (let i = 0; i < statusArray.length && i < this.state.authorsListArray.length; i++) {
       statusArray[i] = {
         status: "Pending....",
         url: this.state.postsList[i],
         details: {},
         responseTime: "",
+        author: this.state.authorsListArray[i],
       };
     }
     this.setState({
@@ -147,9 +149,7 @@ class App extends Component {
     this.setState({
       showLoadingButton: true,
     });
-    await fetch(
-      `http://localhost:9000/getPage/loadMore/${this.state.tagInput}`
-    )
+    await fetch(`http://localhost:9000/getPage/loadMore/${this.state.tagInput}`)
       .then((res) => res.json())
       .then((res) =>
         this.setState({
@@ -324,7 +324,6 @@ class App extends Component {
                   )}
                   {this.state.showLoading && (
                     <span>
-                      {" "}
                       <Spinner animation="grow" variant="info" />
                       <Spinner animation="grow" variant="info" size="sm" /> We
                       are fetching interesting blogs for you
@@ -337,7 +336,7 @@ class App extends Component {
                           <ListGroup.Item>
                             <small>{ind + 1} </small>
                             <p>
-                              {status.status}{" "}
+                              {status.status}
                               {status.status === "Pending...." ? (
                                 <Spinner
                                   animation="border"
@@ -357,7 +356,7 @@ class App extends Component {
                           <ListGroup.Item>
                             <Card>
                               <Card.Header>
-                                {status.details.currentAuthor}
+                                {status.author}
                               </Card.Header>
                               <Card.Body>
                                 <Card.Title className="blog-heading">
@@ -379,8 +378,7 @@ class App extends Component {
                                     style={{ marginRight: "10px" }}
                                     variant="secondary"
                                   >
-                                    {" "}
-                                    {tag.substr(tag.lastIndexOf("/") + 1)}{" "}
+                                    {tag.substr(tag.lastIndexOf("/") + 1)}
                                   </Button>
                                 ))}
 
@@ -424,8 +422,7 @@ class App extends Component {
                             style={{ marginRight: "10px" }}
                             variant="secondary"
                           >
-                            {" "}
-                            {tag.substr(tag.lastIndexOf("/") + 1)}{" "}
+                            {tag.substr(tag.lastIndexOf("/") + 1)}
                           </Button>
                         ))}
 
